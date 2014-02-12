@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "BahaaGalal <bahaa.g.ali@gmail.com>",
   "description": "validation library that is heavily inspired from the old famous codeigniter validation library",
-  "main": "./is.valid.js",
+  "main": "./lib/isValid.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/bahaagalal/is.valid.git"
@@ -23,5 +23,7 @@
     "mocha": "~1.17.1",
     "chai": "~1.9.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "xss": "0.0.9"
+  }
 }
