@@ -1,4 +1,3 @@
-node-validation
-===============
+# is.valid
 
-validation library for node.js inspired from the old famous codeigniter validation library
+validation library for node.js inspired from the old famous codeigniter validation library.
