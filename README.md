@@ -62,38 +62,38 @@ isValid.run(function(err, data){
 
 ## Validation functions 
 
-required: validates that a value exists
+**required**: validates that a value exists
 
-minLength[l]: validates that a value length is at minimum equal to l
+**minLength[l]**: validates that a value length is at minimum equal to l
 
-maxLength[l]: validates that a value length is at maximum equal to l
+**maxLength[l]**: validates that a value length is at maximum equal to l
 
-exactLength[l]: validates that a value length is exactly l
+**exactLength[l]**: validates that a value length is exactly l
 
-greaterThan[l]: validate that a value is greater than l
+**greaterThan[l]**: validate that a value is greater than l
 
-lessThan[l]: validates that a value is less than l
+**lessThan[l]**: validates that a value is less than l
 
-alpha: validates that a value contains only alphabet letters [A-Za-z]
+**alpha**: validates that a value contains only alphabet letters [A-Za-z]
 
-alphaNumeric: validates that a value contains only alphabet letters or numbers [A-Za-z0-9]
+**alphaNumeric**: validates that a value contains only alphabet letters or numbers [A-Za-z0-9]
 
-alphaNumericDash: validates that a value contains only alphabet letters, numbers or dash [A-Za-z0-9\-]
+**alphaNumericDash**: validates that a value contains only alphabet letters, numbers or dash [A-Za-z0-9\-]
 
-numeric: validates that a value is numeric [0-9]
+**numeric**: validates that a value is numeric [0-9]
 
-integer: validates that a value is an integer 
+**integer**: validates that a value is an integer 
 
-decimal: validates that a value is a decimal number
+**decimal**: validates that a value is a decimal number
 
-natural: validates that a value is a natural number >= 0
+**natural**: validates that a value is a natural number >= 0
 
-naturalNoZero: validates that a value is a natural number and greater than zero
+**naturalNoZero**: validates that a value is a natural number and greater than zero
 
-email: validates that a value looks like an email
+**email**: validates that a value looks like an email
 
-regex[s]: validates that a value matches the given regular expressions s
+**regex[s]**: validates that a value matches the given regular expressions s
 
-matches[f]: validates that a value matches a value of another field f
+**matches[f]**: validates that a value matches a value of another field f
 
-sanitize: sanitize a value against any possible xss attacks
+**sanitize**: sanitize a value against any possible xss attacks
