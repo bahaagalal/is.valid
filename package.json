@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "mocha": "~1.17.1",
-    "chai": "~1.9.0"
+    "chai": "~1.9.0",
+    "chai-things": "~0.2.0"
   },
   "dependencies": {
     "xss": "0.0.9"

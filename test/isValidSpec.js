@@ -1,4 +1,6 @@
-var expect = require('chai').expect;
+var chai = require('chai');
+chai.use(require('chai-things'));
+var expect = chai.expect;
 var IsValid = require('../lib/isValid');
 var xss = require('xss');
 
@@ -7,11 +9,13 @@ describe('is.valid', function(){
 	beforeEach(function(){
 		data = {
 			name: 'Bahaa Galal',
+			confirmName: 'Bahaa',
 			username: 'bahaagalal',
 			email: 'bahaa.g.ali@gmail.com',
 			password: '12345678',
 			confirmPassword: '1234556',
 			age: 'dtr456',
+			code: '<script>alert("hi");</script>'
 		};
 		isValid = new IsValid(data);
 	});
@@ -418,6 +422,50 @@ describe('is.valid', function(){
 				var sanitizedValue = xss(value);
 				expect(isValid.sanitize(value)).to.be.equal(sanitizedValue);
 			});
+		});
+
+	});
+
+	describe('#validationLogic', function(){
+
+		it('should add an object to fields object with fieldName and parsed Rules', function(){
+			isValid.addRule('name', 'Name', 'required|maxLength[10]|matches[confirmName]|regex[A-Za-z\|]');
+
+			expect(isValid.fields).to.have.property('name');
+			expect(isValid.fields['name']['fieldName']).to.be.equal('name');
+			expect(isValid.fields['name']['friendlyName']).to.be.equal('Name');
+			expect(isValid.fields['name']['rules']).to.be.an('array');
+			expect(isValid.fields['name']['rules']).to.have.length(4);
+			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'required', options: []});
+			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'maxLength', options: ['10']});
+			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'matches', options: ['Bahaa']});
+			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'regex', options: ['A-Za-z\|']});
+		});
+
+		it('should throw an error if rule doesn\'t exist', function(){
+			var fn = function(){ 
+				isValid.addRule('name', 'Name', 'foobar');
+			};
+			expect(fn).to.throw(/rule doesn't exist./);
+		});
+
+		it('should throw an error if options array is required to perform the validation operation', function(){
+			var fn = function(){ 
+				isValid.addRule('name', 'Name', 'matches');
+			};
+			expect(fn).to.throw(/matches can't operate without options./);
+		});
+
+		it('should throw an error if invalid regex is supplied', function(){
+			var fn = function(){ 
+				isValid.addRule('name', 'Name', 'regex[\[]');
+			};
+			expect(fn).to.throw(/regex expression is invalid./);
+		});
+
+		it('should sanitize the value in the data array when sanitize is passed as a rule', function(){
+			isValid.addRule('code', 'Code', 'sanitize');
+			expect(isValid.data['code']).to.be.equal(xss(data['code']));
 		});
 
 	});
