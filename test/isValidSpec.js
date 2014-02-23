@@ -470,4 +470,26 @@ describe('is.valid', function(){
 
 	});
 
+	describe('#validationExecution', function(){
+
+		it('should return null if no validation rules to test', function(done){
+			isValid.addRule('code', 'Code', 'sanitize');
+			isValid.addRule('email', 'email', 'sanitize');
+			isValid.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+
+		it('should return the following errors when run', function(done){
+			isValid.addRule('name', 'Name', 'minLength[100]|maxLength[2]');
+			isValid.run(function(err, data){
+				expect(err).to.have.property('name');
+				expect(err['name']).to.be.a('string');
+				expect(err['name']).to.be.equal('Name field must a have a minimum length of 100.<br>Name field mustn\'t exceed a maximum length of 2.');
+				done();
+			});
+		});
+	});
+
 });
