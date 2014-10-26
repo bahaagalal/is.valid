@@ -443,21 +443,21 @@ describe('is.valid', function(){
 		});
 
 		it('should throw an error if rule doesn\'t exist', function(){
-			var fn = function(){ 
+			var fn = function(){
 				isValid.addRule('name', 'Name', 'foobar');
 			};
 			expect(fn).to.throw(/rule doesn't exist./);
 		});
 
 		it('should throw an error if options array is required to perform the validation operation', function(){
-			var fn = function(){ 
+			var fn = function(){
 				isValid.addRule('name', 'Name', 'matches');
 			};
 			expect(fn).to.throw(/matches can't operate without options./);
 		});
 
 		it('should throw an error if invalid regex is supplied', function(){
-			var fn = function(){ 
+			var fn = function(){
 				isValid.addRule('name', 'Name', 'regex[\[]');
 			};
 			expect(fn).to.throw(/regex expression is invalid./);
@@ -487,6 +487,96 @@ describe('is.valid', function(){
 				expect(err).to.have.property('name');
 				expect(err['name']).to.be.a('string');
 				expect(err['name']).to.be.equal('Name field must a have a minimum length of 100.<br>Name field mustn\'t exceed a maximum length of 2.');
+				done();
+			});
+		});
+	});
+
+	describe('#list', function(){
+
+		it('should return false if the value provided isn\'t list in its format', function(done){
+			var validate = new IsValid({
+				keywords: 'apple,,mac'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|list');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('keywords');
+				expect(err.keywords).to.be.equal('keywords isn\'t a valid list.');
+				done();
+			});
+		});
+
+		it('should return true if the value provided is a list', function(done){
+			var validate = new IsValid({
+				keywords: 'apple,mac,iphone'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|list');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+	});
+
+	describe('#minListLength', function(){
+
+		it('should return false if the list length is less than 2', function(done){
+			var validate = new IsValid({
+				keywords: 'apple'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|minListLength[2]');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('keywords');
+				expect(err.keywords).to.be.equal('keywords should have a minimum length of 2.');
+				done();
+			});
+		});
+
+		it('should return true if list has the minimum length', function(done){
+			var validate = new IsValid({
+				keywords: 'apple,mac'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|minListLength[2]');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+	});
+
+	describe('#maxListLength', function(){
+
+		it('should return false if the list length is greater than 2', function(done){
+			var validate = new IsValid({
+				keywords: 'apple,mac,iphone'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|maxListLength[2]');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('keywords');
+				expect(err.keywords).to.be.equal('keywords should have a maximum length of 2.');
+				done();
+			});
+		});
+
+		it('should return true if list has below the maximum length', function(done){
+			var validate = new IsValid({
+				keywords: 'apple,mac'
+			});
+
+			validate.addRule('keywords', 'keywords', 'required|maxListLength[2]');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
 				done();
 			});
 		});

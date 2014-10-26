@@ -20,7 +20,7 @@ var IsValid = require('is.valid');
 /** construct a new is.valid object passing the data array to validate
   * date array should contain a set of objects formatted as following
   * {fieldName: value}
- */ 
+ */
 var data = {
 	name: 'foo bar',
 	email: 'foo@bar.com'
@@ -33,12 +33,12 @@ Add validation rules
 ```js
 /**
   * to add validation rules use addRule function
-  * addRule accepts 3 arguments 
+  * addRule accepts 3 arguments
   * field Name as in data object
   * friendly Name for error messages
   * rules separated by |
   * rule is specified by a name and optionaly options
-  * like for minLength you should also submit what is the minimum length 
+  * like for minLength you should also submit what is the minimum length
   * using the brackets way [10]
  **/
 isValid.addRule('name', 'Name', 'required|minLength[10]');
@@ -50,17 +50,17 @@ Run validation rules
 /**
   * run function go through all validation rules you specified for all fields
   * it accepts a callback function
-  * where err is an array contains all error messages formatted like 
+  * where err is an array contains all error messages formatted like
   * {fieldName: errorMessage }
   * or null if no errors have been found
-  * and data is the data object 
+  * and data is the data object
  **/
 isValid.run(function(err, data){
-	
+
 });
 ```
 
-## Validation functions 
+## Validation functions
 
 **required**: validates that a value exists
 
@@ -82,7 +82,7 @@ isValid.run(function(err, data){
 
 **numeric**: validates that a value is numeric [0-9]
 
-**integer**: validates that a value is an integer 
+**integer**: validates that a value is an integer
 
 **decimal**: validates that a value is a decimal number
 
@@ -95,5 +95,11 @@ isValid.run(function(err, data){
 **regex[s]**: validates that a value matches the given regular expressions s
 
 **matches[f]**: validates that a value matches a value of another field f
+
+**list**: validates that a value is a list
+
+**minListLength[l]**: validates that a list has a minimum length l
+
+**maxListLength[l]**: validates that a list doesn't exceed a maximum length l
 
 **sanitize**: sanitize a value against any possible xss attacks
