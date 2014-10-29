@@ -612,4 +612,34 @@ describe('is.valid', function(){
 		});
 	});
 
+	describe('#beforeDate', function(){
+
+		it('should return false if the date is after given date', function(done){
+			var validate = new IsValid({
+				date: '2014-01-10'
+			});
+
+			validate.addRule('date', 'date', 'required|date|beforeDate[2014-01-09]');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('date');
+				expect(err.date).to.be.equal('date should be earlier than 2014-01-09.');
+				done();
+			});
+		});
+
+		it('should return true if date is before the given date', function(done){
+			var validate = new IsValid({
+				date: '2014-01-10'
+			});
+
+			validate.addRule('date', 'date', 'required|date|beforeDate[2014-01-11]');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+	});
+
 });
