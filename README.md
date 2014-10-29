@@ -102,4 +102,10 @@ isValid.run(function(err, data){
 
 **maxListLength[l]**: validates that a list doesn't exceed a maximum length l
 
+**date**: validates that a value is an actual date
+
+**beforeDate[l]**: validates that a date is earlier than another date l
+
+**afterDate[l]**: validates that a date is later than another date l
+
 **sanitize**: sanitize a value against any possible xss attacks
