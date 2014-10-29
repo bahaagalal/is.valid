@@ -582,4 +582,34 @@ describe('is.valid', function(){
 		});
 	});
 
+	describe('#date', function(){
+
+		it('should return false if the date isn\'t valid', function(done){
+			var validate = new IsValid({
+				date: 'invalid-date'
+			});
+
+			validate.addRule('date', 'date', 'required|date');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('date');
+				expect(err.date).to.be.equal('date should be in a good date shape.');
+				done();
+			});
+		});
+
+		it('should return true if date is valid', function(done){
+			var validate = new IsValid({
+				date: '2014-01-10'
+			});
+
+			validate.addRule('date', 'date', 'required|date');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+	});
+
 });
