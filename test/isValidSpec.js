@@ -672,4 +672,36 @@ describe('is.valid', function(){
 		});
 	});
 
+	describe('#boolean', function(){
+
+		it('should return false if the value is not true or false', function(done){
+			var validate = new IsValid({
+				is_active: 'no'
+			});
+
+			validate.addRule('is_active', 'is active flag', 'required|boolean');
+			validate.run(function(err, data){
+				expect(err).to.not.be.null;
+				expect(err).to.be.an('object');
+				expect(err).to.have.property('is_active');
+				expect(err.is_active).to.be.equal('is active flag should either be true or false.');
+				done();
+			});
+		});
+
+		it('should return true if value is true or false', function(done){
+			var validate = new IsValid({
+				is_active: 'true',
+				is_not_active: 'false'
+			});
+
+			validate.addRule('is_active', 'is active flag', 'required|boolean');
+			validate.addRule('is_not_active', 'is not active flag', 'required|boolean');
+			validate.run(function(err, data){
+				expect(err).to.be.null;
+				done();
+			});
+		});
+	});
+
 });
