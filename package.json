@@ -25,6 +25,7 @@
     "chai-things": "~0.2.0"
   },
   "dependencies": {
-    "xss": "0.0.9"
+    "xss": "0.0.9",
+    "moment": "~2.8.3"
   }
 }
