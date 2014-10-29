@@ -108,4 +108,6 @@ isValid.run(function(err, data){
 
 **afterDate[l]**: validates that a date is later than another date l
 
+**boolean**: validates that a value is either true or false
+
 **sanitize**: sanitize a value against any possible xss attacks
