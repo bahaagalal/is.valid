@@ -1,6 +1,6 @@
 {
   "name": "is.valid",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "BahaaGalal <bahaa.g.ali@gmail.com>",
   "description": "validation library that is heavily inspired from the old famous codeigniter validation library",
   "main": "./lib/isValid.js",
