@@ -38,6 +38,23 @@ describe('is.valid', function(){
 			expect(isValid2.errorMessages).to.equal(errors);
 		});
 
+		it('should replace error messages by using setErrorMessages', function(){
+			var errors = {
+				name: 'name.'
+			};
+			isValid.setErrorMessages(errors)
+			expect(isValid.errorMessages).to.deep.equal(errors);
+		});
+
+		it('should replace data by using setData', function(){
+			isValid.setData({
+				name: 'name'
+			})
+			expect(isValid.data).to.deep.equal({
+				name: 'name'
+			});
+		});
+
 	});
 
 	describe('fns', function(){
@@ -703,5 +720,4 @@ describe('is.valid', function(){
 			});
 		});
 	});
-
 });
