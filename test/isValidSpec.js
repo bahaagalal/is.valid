@@ -34,14 +34,15 @@ describe('is.valid6', function(){
 	describe('#validationLogic', function(){
 
 		it('should add an object to fields object with fieldName and parsed Rules', function(){
-			isValid.addRule('name', 'required|maxLength[10]|matches[confirmName]');
+			isValid.addRule('name', 'required|maxLength[10]|matches[confirmName]|regex[A-Za-z\|]');
 
 			expect(isValid.ruledFields).to.have.property('name');
 			expect(isValid.ruledFields['name']).to.be.an('array');
-			expect(isValid.ruledFields['name']).to.have.length(3);
+			expect(isValid.ruledFields['name']).to.have.length(4);
 			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'required', options: []});
 			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'maxLength', options: ['10']});
 			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'matches', options: ['Bahaa']});
+			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'regex', options: ['A-Za-z\|']});
 		});
 
 		it('should throw an error if rule doesn\'t exist', function(){
