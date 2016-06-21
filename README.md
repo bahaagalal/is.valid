@@ -33,15 +33,14 @@ Add validation rules
 ```js
 /**
   * to add validation rules use addRule function
-  * addRule accepts 3 arguments
+  * addRule accepts 2 arguments
   * field Name as in data object
-  * friendly Name for error messages
-  * rules separated by |
+  * and rules separated by |
   * rule is specified by a name and optionaly options
   * like for minLength you should also submit what is the minimum length
   * using the brackets way [10]
  **/
-isValid.addRule('name', 'Name', 'required|minLength[10]');
+isValid.addRule('name', 'required|minLength[10]');
 ```
 
 Run validation rules
@@ -49,15 +48,17 @@ Run validation rules
 ```js
 /**
   * run function go through all validation rules you specified for all fields
-  * it accepts a callback function
-  * where err is an array contains all error messages formatted like
-  * {fieldName: errorMessage }
-  * or null if no errors have been found
-  * and data is the data object
+  * it returns Promise object that is rejected if rule(s) was broken
+  * the handler function sent to catch method takes err as a parameter which is an array of all error objects like
+  * [{name: {type: 'minLength', meta: ['10']}}]
+  * and handler function sent to resolve method would receive data object as parameter if all rules were met.
  **/
-isValid.run(function(err, data){
-
-});
+isValid.run()
+.then(value => {
+	console.log('Revolved: ' + value)})
+.catch(error => {
+		console.log('Rejected: ' + error);
+	});
 ```
 
 ## Validation functions

@@ -1,10 +1,13 @@
-var chai = require('chai');
-chai.use(require('chai-things'));
-var expect = chai.expect;
-var IsValid = require('../lib/isValid');
-var xss = require('xss');
+"user strict";
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+const expect = chai.expect;
+const Validator = require('../lib/isValid');
+const checkedRules = require('../lib/checkedRules');
+// var xss = require('xss');
 
-describe('is.valid', function(){
+describe('is.valid6', function(){
 
 	beforeEach(function(){
 		data = {
@@ -17,7 +20,7 @@ describe('is.valid', function(){
 			age: 'dtr456',
 			code: '<script>alert("hi");</script>'
 		};
-		isValid = new IsValid(data);
+		isValid = new Validator(data);
 	});
 
 	describe('#constructor', function(){
@@ -25,699 +28,281 @@ describe('is.valid', function(){
 		it('should init the data property with the data passed', function(){
 			expect(isValid.data).to.equal(data);
 		});
-
-		it('should load the error messages file if no error messages object has passed', function(){
-			expect(isValid.errorMessages).to.exist;
-		});
-
-		it('should replace the error messages if an error message object has been passed', function(){
-			var errors = {
-				lorem: 'lorem ipsum.'
-			};
-			var isValid2 = new IsValid(data, errors);
-			expect(isValid2.errorMessages).to.equal(errors);
-		});
-
-		it('should replace error messages by using setErrorMessages', function(){
-			var errors = {
-				name: 'name.'
-			};
-			isValid.setErrorMessages(errors)
-			expect(isValid.errorMessages).to.deep.equal(errors);
-		});
-
-		it('should replace data by using setData', function(){
-			isValid.setData({
-				name: 'name'
-			})
-			expect(isValid.data).to.deep.equal({
-				name: 'name'
-			});
-		});
-
 	});
 
-	describe('fns', function(){
-
-		describe('#required', function(){
-
-			it('should return true if the value is not undefined, null, NaN, empty string, and zero', function(done){
-				isValid.required('foo', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is undefined, null, NaN, empty string or zero (number)', function(done){
-				isValid.required(null, null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.required(undefined, null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.required(NaN, null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.required('', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.required('0', null, function(retrn){
-					expect(retrn).to.be.true;
-				});
-
-				isValid.required(0, null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#minLength', function(){
-
-			it('should return true if the value.length is greater or equalto minLength', function(done){
-				isValid.minLength('foo', [3], function(retrn){
-					expect(retrn).to.be.true;
-				});
-
-				isValid.minLength('foo', [2], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value.length is less than minLength', function(done){
-				isValid.minLength('foo', [4], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#maxLength', function(){
-
-			it('should return true if the value.length is less or equalto maxLength', function(done){
-				isValid.maxLength('foo', [3], function(retrn){
-					expect(retrn).to.be.true;
-				});
-
-				isValid.maxLength('foo', [4], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value.length is greater than maxLength', function(done){
-				isValid.maxLength('foo', [2], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#exactLength', function(){
-
-			it('should return true if the value.length is equalto exactLength', function(done){
-				isValid.exactLength('foo', [3], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value.length is greater or less than maxLength', function(done){
-				isValid.exactLength('foo', [4], function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.exactLength('foo', [2], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#greaterThan', function(){
-
-			it('should return true if the value is greater than given value', function(done){
-				isValid.greaterThan(12, [9], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is less than or equal given value', function(done){
-				isValid.greaterThan(12, [12], function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.greaterThan(12, [13], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#lessThan', function(){
-
-			it('should return true if the value is less than given value', function(done){
-				isValid.lessThan(8, [9], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is greater than or equal to given value', function(done){
-				isValid.lessThan(8, [7], function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.lessThan(8, [8], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#alpha', function(){
-
-			it('should return true if the value contains only alphabet characters', function(done){
-				isValid.alpha('Foobar', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value contains any character outside the alphabet', function(done){
-				isValid.alpha('foobar!', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#alphaNumeric', function(){
-
-			it('should return true if the value contains only alphabet characters and/or numbers', function(done){
-				isValid.alphaNumeric('Foobar12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value contains any character outside the alphabet or numbers', function(done){
-				isValid.alphaNumeric('foobar12#', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#alphaNumericDash', function(){
-
-			it('should return true if the value contains only alphabet characters, numbers and/or dash(-)', function(done){
-				isValid.alphaNumericDash('Foobar12-', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value contains any character outside the alphabet, numbers or dash(-)', function(done){
-				isValid.alphaNumericDash('foobar12-_', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#numeric', function(){
-
-			it('should return true if the value contains only numbers', function(done){
-				isValid.numeric('12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value contains any character outside the numbers', function(done){
-				isValid.numeric('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#integer', function(){
-
-			it('should return true if the value is integer', function(done){
-				isValid.integer('12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is non integer', function(done){
-				isValid.integer('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.integer('12.2', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#decimal', function(){
-
-			it('should return true if the value is decimal', function(done){
-				isValid.decimal('12', null, function(retrn){
-					expect(retrn).to.be.true;
-				});
-
-				isValid.decimal('12.12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is non decimal', function(done){
-				isValid.decimal('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.decimal('12.12.1', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#natural', function(){
-
-			it('should return true if the value is natural', function(done){
-				isValid.natural('12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is non natural', function(done){
-				isValid.natural('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.natural('-12', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#naturalNoZero', function(){
-
-			it('should return true if the value is natural and not zero', function(done){
-				isValid.naturalNoZero('12', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value is non natural or zero', function(done){
-				isValid.naturalNoZero('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.naturalNoZero('-12', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.naturalNoZero('0', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#email', function(){
-
-			it('should return true if the value looks like an email', function(done){
-				isValid.email('foo@bar.ca', null, function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value doesn\'t look like an email', function(done){
-				isValid.email('12d-_', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.email('foo@bar', null, function(retrn){
-					expect(retrn).to.be.false;
-				});
-
-				isValid.email('foo@bar.', null, function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-
-		});
-
-		describe('#regex', function(){
-			it('should return true if the value matches a given pattern', function(done){
-				isValid.regex('19', ['[0-9]+'], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value doesn\'t match a given pattern', function(done){
-				isValid.regex('12d-_', ['^[0-9]+$'], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-		});
-
-		describe('#matches', function(){
-			it('should return true if the value matches a given value', function(done){
-				isValid.matches('19', ['19'], function(retrn){
-					expect(retrn).to.be.true;
-					done();
-				});
-			});
-
-			it('should return false if the value doesn\'t match a given value', function(done){
-				isValid.matches('12d-_', ['12d-'], function(retrn){
-					expect(retrn).to.be.false;
-					done();
-				});
-			});
-		});
-
-		describe('#sanitize', function(){
-			it('should sanitize the value preventing any xss attack', function(){
-				var value = '<script></script>bahaa_500@hotmail.com';
-				var sanitizedValue = xss(value);
-				expect(isValid.sanitize(value)).to.be.equal(sanitizedValue);
-			});
-		});
-
-	});
 
 	describe('#validationLogic', function(){
 
 		it('should add an object to fields object with fieldName and parsed Rules', function(){
-			isValid.addRule('name', 'Name', 'required|maxLength[10]|matches[confirmName]|regex[A-Za-z\|]');
+			isValid.addRule('name', 'required|maxLength[10]|matches[confirmName]|regex[A-Za-z\|]');
 
-			expect(isValid.fields).to.have.property('name');
-			expect(isValid.fields['name']['fieldName']).to.be.equal('name');
-			expect(isValid.fields['name']['friendlyName']).to.be.equal('Name');
-			expect(isValid.fields['name']['rules']).to.be.an('array');
-			expect(isValid.fields['name']['rules']).to.have.length(4);
-			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'required', options: []});
-			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'maxLength', options: ['10']});
-			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'matches', options: ['Bahaa']});
-			expect(isValid.fields['name']['rules']).to.include.something.that.deep.equals({ruleName: 'regex', options: ['A-Za-z\|']});
+			expect(isValid.ruledFields).to.have.property('name');
+			expect(isValid.ruledFields['name']).to.be.an('array');
+			expect(isValid.ruledFields['name']).to.have.length(4);
+			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'required', options: []});
+			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'maxLength', options: ['10']});
+			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'matches', options: ['Bahaa']});
+			expect(isValid.ruledFields['name']).to.include.something.that.deep.equals({ruleName: 'regex', options: ['A-Za-z\|']});
 		});
 
 		it('should throw an error if rule doesn\'t exist', function(){
 			var fn = function(){
-				isValid.addRule('name', 'Name', 'foobar');
+				isValid.addRule('name', 'foobar');
 			};
 			expect(fn).to.throw(/rule doesn't exist./);
 		});
 
 		it('should throw an error if options array is required to perform the validation operation', function(){
 			var fn = function(){
-				isValid.addRule('name', 'Name', 'matches');
+				isValid.addRule('name', 'matches');
 			};
 			expect(fn).to.throw(/matches can't operate without options./);
 		});
 
 		it('should throw an error if invalid regex is supplied', function(){
 			var fn = function(){
-				isValid.addRule('name', 'Name', 'regex[\[]');
+				isValid.addRule('name', 'regex[\[]');
 			};
 			expect(fn).to.throw(/regex expression is invalid./);
 		});
 
-		it('should sanitize the value in the data array when sanitize is passed as a rule', function(){
-			isValid.addRule('code', 'Code', 'sanitize');
-			expect(isValid.data['code']).to.be.equal(xss(data['code']));
-		});
+		// it('should sanitize the value in the data array when sanitize is passed as a rule', function(){
+		// 	isValid.addRule('code', 'Code', 'sanitize');
+		// 	expect(isValid.data['code']).to.be.equal(xss(data['code']));
+		// });
 
 	});
 
 	describe('#validationExecution', function(){
 
-		it('should return null if no validation rules to test', function(done){
-			isValid.addRule('code', 'Code', 'sanitize');
-			isValid.addRule('email', 'email', 'sanitize');
-			isValid.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+		it('should return null if no validation rules to test', function(){
+			// isValid.addRule('code', 'Code', 'sanitize');
+			// isValid.addRule('email', 'email', 'sanitize');
+			return isValid.run().then(value => {
+				expect(value).to.be.equal(isValid.data);
 			});
 		});
 
-		it('should return the following errors when run', function(done){
-			isValid.addRule('name', 'Name', 'minLength[100]|maxLength[2]');
-			isValid.run(function(err, data){
+		it('should return minLength and maxLength errors when run', function(){
+			isValid.addRule('name', 'minLength[100]|maxLength[2]');
+			var p = isValid.run().catch(err => {
 				expect(err).to.have.property('name');
-				expect(err['name']).to.be.a('string');
-				expect(err['name']).to.be.equal('Name field must a have a minimum length of 100.<br>Name field mustn\'t exceed a maximum length of 2.');
-				done();
+				expect(err['name']).to.be.an('array');
+				expect(err['name']).to.have.length(2);
+				expect(err['name']).to.include.something.that.deep.equals({type: 'minLength', meta: ['100']});
+				expect(err['name']).to.include.something.that.deep.equals({type: 'maxLength', meta:   ['2']});
 			});
+			return p;
 		});
 	});
 
 	describe('#list', function(){
 
-		it('should return false if the value provided isn\'t list in its format', function(done){
-			var validate = new IsValid({
+		it('should return false if the value provided isn\'t list in its format', function(){
+			var validate = new Validator({
 				keywords: 'apple,,mac'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|list');
-			validate.run(function(err, data){
+			validate.addRule('keywords', 'required|list');
+			var p = validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('keywords');
-				expect(err.keywords).to.be.equal('keywords isn\'t a valid list.');
-				done();
+				expect(err['keywords']).to.be.an('array');
+				expect(err['keywords']).to.have.length(1);
+				expect(err['keywords']).to.include.something.that.deep.equals({type: 'list', meta: []});
 			});
+			return p;
 		});
 
-		it('should return true if the value provided is a list', function(done){
-			var validate = new IsValid({
+		it('should return true if the value provided is a list', function(){
+			var validate = new Validator({
 				keywords: 'apple,mac,iphone'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|list');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('keywords', 'required|list');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
+
 	});
 
 	describe('#minListLength', function(){
 
-		it('should return false if the list length is less than 2', function(done){
-			var validate = new IsValid({
-				keywords: 'apple'
+		it('should return false if the list length is less than 2', function(){
+			var validate = new Validator({
+				keywords: 'apple,,'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|minListLength[2]');
-			validate.run(function(err, data){
+			validate.addRule('keywords', 'required|list|minListLength[2]');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('keywords');
-				expect(err.keywords).to.be.equal('keywords should have a minimum length of 2.');
-				done();
+				expect(err['keywords']).to.be.an('array');
+				expect(err['keywords']).to.have.length(2);
+				expect(err['keywords']).to.include.something.that.deep.equals({type: 'minListLength', meta: ['2']});
+				expect(err['keywords']).to.include.something.that.deep.equals({type: 'list', meta: []});
 			});
+
 		});
 
-		it('should return true if list has the minimum length', function(done){
-			var validate = new IsValid({
+		it('should return true if list has the minimum length', function(){
+			var validate = new Validator({
 				keywords: 'apple,mac'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|minListLength[2]');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('keywords', 'required|minListLength[2]');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
 
 	describe('#maxListLength', function(){
 
-		it('should return false if the list length is greater than 2', function(done){
-			var validate = new IsValid({
+		it('should return false if the list length is greater than 2', function(){
+			var validate = new Validator({
 				keywords: 'apple,mac,iphone'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|maxListLength[2]');
-			validate.run(function(err, data){
+			validate.addRule('keywords', 'required|maxListLength[2]');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('keywords');
-				expect(err.keywords).to.be.equal('keywords should have a maximum length of 2.');
-				done();
+				expect(err['keywords']).to.be.an('array');
+				expect(err['keywords']).to.have.length(1);
+				expect(err['keywords']).to.include.something.that.deep.equals({type: 'maxListLength', meta: ['2']});
 			});
 		});
 
-		it('should return true if list has below the maximum length', function(done){
-			var validate = new IsValid({
+		it('should return true if list has below the maximum length', function(){
+			var validate = new Validator({
 				keywords: 'apple,mac'
 			});
 
-			validate.addRule('keywords', 'keywords', 'required|maxListLength[2]');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('keywords', 'required|maxListLength[2]');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
 
 	describe('#date', function(){
 
-		it('should return false if the date isn\'t valid', function(done){
-			var validate = new IsValid({
+		it('should return false if the date isn\'t valid', function(){
+			var validate = new Validator({
 				date: 'invalid-date'
 			});
 
-			validate.addRule('date', 'date', 'required|date');
-			validate.run(function(err, data){
+			validate.addRule('date', 'required|date');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('date');
-				expect(err.date).to.be.equal('date should be in a good date shape.');
-				done();
+				expect(err['date']).to.be.an('array');
+				expect(err['date']).to.have.length(1);
+				expect(err['date']).to.include.something.that.deep.equals({type: 'date', meta: []});
 			});
 		});
 
-		it('should return true if date is valid', function(done){
-			var validate = new IsValid({
+		it('should return true if date is valid', function(){
+			var validate = new Validator({
 				date: '2014-01-10'
 			});
 
-			validate.addRule('date', 'date', 'required|date');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('date', 'required|date');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
 
 	describe('#beforeDate', function(){
 
-		it('should return false if the date is after given date', function(done){
-			var validate = new IsValid({
+		it('should return false if the date is after given date', function(){
+			var validate = new Validator({
 				date: '2014-01-10'
 			});
 
-			validate.addRule('date', 'date', 'required|date|beforeDate[2014-01-09]');
-			validate.run(function(err, data){
+			validate.addRule('date', 'required|date|beforeDate[2014-01-09]');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('date');
-				expect(err.date).to.be.equal('date should be earlier than 2014-01-09.');
-				done();
+				expect(err['date']).to.be.an('array');
+				expect(err['date']).to.have.length(1);
+				expect(err['date']).to.include.something.that.deep.equals({type: 'beforeDate', meta: ['2014-01-09']});
 			});
 		});
 
-		it('should return true if date is before the given date', function(done){
-			var validate = new IsValid({
+		it('should return true if date is before the given date', function(){
+			var validate = new Validator({
 				date: '2014-01-10'
 			});
 
 			validate.addRule('date', 'date', 'required|date|beforeDate[2014-01-11]');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
 
 	describe('#afterDate', function(){
 
-		it('should return false if the date is before given date', function(done){
-			var validate = new IsValid({
+		it('should return false if the date is before given date', function(){
+			var validate = new Validator({
 				date: '2014-01-10'
 			});
 
-			validate.addRule('date', 'date', 'required|date|afterDate[2014-01-11]');
-			validate.run(function(err, data){
+			validate.addRule('date', 'required|date|afterDate[2014-01-11]');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('date');
-				expect(err.date).to.be.equal('date should be later than 2014-01-11.');
-				done();
+				expect(err['date']).to.be.an('array');
+				expect(err['date']).to.have.length(1);
+				expect(err['date']).to.include.something.that.deep.equals({type: 'afterDate', meta: ['2014-01-11']});
 			});
 		});
 
-		it('should return true if date is after the given date', function(done){
-			var validate = new IsValid({
+		it('should return true if date is after the given date', function(){
+			var validate = new Validator({
 				date: '2014-01-10'
 			});
 
-			validate.addRule('date', 'date', 'required|date|afterDate[2014-01-09]');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('date', 'required|date|afterDate[2014-01-09]');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
 
 	describe('#boolean', function(){
 
-		it('should return false if the value is not true or false', function(done){
-			var validate = new IsValid({
+		it('should return false if the value is not true or false', function(){
+			var validate = new Validator({
 				is_active: 'no'
 			});
 
-			validate.addRule('is_active', 'is active flag', 'required|boolean');
-			validate.run(function(err, data){
+			validate.addRule('is_active', 'required|boolean');
+			return validate.run().catch(err => {
 				expect(err).to.not.be.null;
-				expect(err).to.be.an('object');
 				expect(err).to.have.property('is_active');
-				expect(err.is_active).to.be.equal('is active flag should either be true or false.');
-				done();
+				expect(err['is_active']).to.be.an('array');
+				expect(err['is_active']).to.have.length(1);
+				expect(err['is_active']).to.include.something.that.deep.equals({type: 'boolean', meta: []});
 			});
 		});
 
-		it('should return true if value is true or false', function(done){
-			var validate = new IsValid({
+		it('should return true if value is true or false', function(){
+			var validate = new Validator({
 				is_active: 'true',
 				is_not_active: 'false'
 			});
 
-			validate.addRule('is_active', 'is active flag', 'required|boolean');
-			validate.addRule('is_not_active', 'is not active flag', 'required|boolean');
-			validate.run(function(err, data){
-				expect(err).to.be.null;
-				done();
+			validate.addRule('is_active', 'required|boolean');
+			validate.addRule('is_not_active', 'required|boolean');
+			return validate.run().then(val => {
+				expect(val).to.be.equal(validate.data);
 			});
 		});
 	});
+
 });

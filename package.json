@@ -1,6 +1,6 @@
 {
   "name": "is.valid",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "author": "BahaaGalal <bahaa.g.ali@gmail.com>",
   "description": "validation library that is heavily inspired from the old famous codeigniter validation library",
   "main": "./lib/isValid.js",
@@ -14,15 +14,16 @@
     "data validation"
   ],
   "engine": {
-    "node": ">=0.10"
+    "node": ">=4.0.0"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/*.js"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
-    "chai": "~1.9.0",
-    "chai-things": "~0.2.0"
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "chai-things": "~0.2.0",
+    "mocha": "^2.4.5"
   },
   "dependencies": {
     "xss": "0.0.9",
